@@ -7,7 +7,7 @@
                  :class="['message-bubble', message.sender === 'user' ? 'user-message' : 'bot-message']">
                 <!-- Use v-html for bot messages to render Markdown -->
                 <span v-if="message.sender === 'user'">{{ message.text }}</span>
-                <span v-else v-html="message.html"></span>
+                <span v-else v-html="message.html"></span><span></span>
             </div>
             <!-- Loading indicator for bot response -->
             <div v-show="isLoading" class="loading-indicator">
