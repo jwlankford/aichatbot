@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Chatbot</title><script src="https://cdn.tailwindcss.com"></script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://unpkg.com/vue@3/dist/vue.global.js"></script><style>body {
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Chatbot</title><script src="https://cdn.tailwindcss.com"></script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://unpkg.com/vue@3/dist/vue.global.js"></script><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script><style>body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f2f5;
             display: flex;
@@ -47,11 +47,24 @@
             color: #374151; /* Dark gray text */
             border-bottom-left-radius: 0.25rem; /* Sharper corner for bot message */
         }
+        /* Styling for Markdown content within bot messages */
+        .bot-message p {
+            margin-bottom: 0.5em;
+        }
+        .bot-message ul, .bot-message ol {
+            list-style-position: inside;
+            margin-left: 1em;
+            margin-bottom: 0.5em;
+        }
+        .bot-message strong {
+            font-weight: 600;
+        }
         .input-area {
             padding: 1.5rem;
             border-top: 1px solid #e5e7eb;
             background-color: #ffffff;
             display: flex;
+            flex-wrap: wrap; /* Allow wrapping for buttons on small screens */
             gap: 0.75rem;
             align-items: center;
         }
@@ -113,7 +126,7 @@
             .input-area button {
                 width: 100%;
             }
-        }</style><script defer="defer" src="/aichatbot/js/app.9501c9d0.js"></script></head><body><div id="app"><div class="chat-messages"><div v-for="(message, index) in messages" :key="index" :class="['message-bubble', message.sender === 'user' ? 'user-message' : 'bot-message']">{{ message.text }}</div><div v-show="isLoading" class="loading-indicator">Bot is typing...</div></div><div class="input-area"><input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type your message..." :disabled="isLoading" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"/> <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()">Send</button></div></div><script type="module">console.log("Vue script started."); // Log when the script begins execution
+        }</style><script defer="defer" src="/aichatbot/js/app.9501c9d0.js"></script></head><body><div id="app"><div class="chat-messages"><div v-for="(message, index) in messages" :key="index" :class="['message-bubble', message.sender === 'user' ? 'user-message' : 'bot-message']"><span v-if="message.sender === 'user'">{{ message.text }}</span> <span v-else v-html="message.html"></span></div><div v-show="isLoading" class="loading-indicator">Bot is typing...</div></div><div class="input-area"><input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type your message..." :disabled="isLoading" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"/> <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()">Send</button></div></div><script type="module">console.log("Vue script started."); // Log when the script begins execution
         const { createApp, ref, nextTick } = Vue;
 
         // Ensure the app is only mounted once
@@ -123,7 +136,8 @@
                     console.log("Vue setup function started."); // Log when setup function is entered
                     // Reactive data properties
                     const messages = ref([
-                        { sender: 'bot', text: "Hello! How can I help you today?" } // Added an initial message
+                        // Initial message now includes both raw text and parsed HTML
+                        { sender: 'bot', text: "Hello! How can I help you today?", html: marked.parse("Hello! How can I help you today?") }
                     ]); // Stores chat history
                     const newMessage = ref(''); // Stores the current message being typed
                     const isLoading = ref(false); // Indicates if the bot is generating a response
@@ -143,7 +157,7 @@
                         const messageText = newMessage.value.trim();
                         if (!messageText) return; // Do nothing if message is empty
 
-                        // Add user message to chat history
+                        // Add user message to chat history (no HTML parsing needed for user messages)
                         messages.value.push({ sender: 'user', text: messageText });
                         newMessage.value = ''; // Clear input field
                         scrollToBottom(); // Scroll to show new message
@@ -155,26 +169,26 @@
                             await callGeminiAPI(messageText);
                         } catch (error) {
                             console.error("Error sending message:", error);
-                            messages.value.push({ sender: 'bot', text: "Oops! Something went wrong. Please try again." });
+                            // Add error message with HTML parsing
+                            messages.value.push({ sender: 'bot', text: "Oops! Something went wrong. Please try again.", html: marked.parse("Oops! Something went wrong. Please try again.") });
                         } finally {
                             isLoading.value = false; // Hide loading indicator
                             scrollToBottom(); // Scroll to show bot response
                         }
                     };
 
-                    // Function to call the Gemini API
+                    // Function to call the Gemini API for general chat
                     const callGeminiAPI = async (prompt) => {
                         let chatHistory = [];
-                        // Add previous messages to history for context (optional, but good for chatbots)
-                        // For simplicity, this example only sends the current prompt.
-                        // For full conversation memory, you'd iterate through `messages.value`
-                        // and format them for the API payload.
+                        // For a more robust chatbot, you would send the entire relevant conversation history
+                        // to provide context to the LLM. For this example, we'll just send the current prompt.
                         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
                         const payload = { contents: chatHistory };
                         const apiKey = "AIzaSyBBg_AVPEJQ7_M4rds0BVUJ74akN8BDHyg"; // API key is provided by the Canvas environment
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
+                        console.log("General Chat API Key (before fetch):", apiKey); // Log API key
                         const response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -193,9 +207,10 @@
                             result.candidates[0].content && result.candidates[0].content.parts &&
                             result.candidates[0].content.parts.length > 0) {
                             const botResponseText = result.candidates[0].content.parts[0].text;
-                            messages.value.push({ sender: 'bot', text: botResponseText });
+                            // Store both raw text and parsed HTML
+                            messages.value.push({ sender: 'bot', text: botResponseText, html: marked.parse(botResponseText) });
                         } else {
-                            messages.value.push({ sender: 'bot', text: "I couldn't generate a response. Please try rephrasing." });
+                            messages.value.push({ sender: 'bot', text: "I couldn't generate a response. Please try rephrasing.", html: marked.parse("I couldn't generate a response. Please try rephrasing.") });
                         }
                     };
 
