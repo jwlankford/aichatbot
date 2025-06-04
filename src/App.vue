@@ -4,7 +4,7 @@
         <!-- Title and description container -->
         <div class="title-container w-full md:w-1/3 mb-8 md:mb-0">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Chat Bot</h1>
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">developed by</h2>
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">developed by Jeremy Lankford</h2>
             <p class="text-gray-600 mb-2">This is a simple chat bot that uses the Gemini LLM to generate responses.</p>
             <p class="text-gray-600 mb-4">Type your message below and press enter or click send to get a response.</p>
             <small class="text-gray-500">
