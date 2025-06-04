@@ -3,13 +3,12 @@
     <div class="main-wrapper flex flex-col md:flex-row md:gap-8 justify-center items-start p-4 md:p-8 w-full max-w-screen-xl mx-auto">
         <!-- Title and description container -->
         <div class="title-container w-full md:w-1/3 mb-8 md:mb-0">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Jeremy Lankford</h1>
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gemini LLM Chat Bot</h2>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Chat Bot</h1>
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">developed by</h2>
             <p class="text-gray-600 mb-2">This is a simple chat bot that uses the Gemini LLM to generate responses.</p>
             <p class="text-gray-600 mb-4">Type your message below and press enter or click send to get a response.</p>
             <small class="text-gray-500">
                 <p class="mb-1">Note: This is a demo app and the API key is hardcoded for demonstration purposes. In a production app, the API key is restricted to this domain only.</p>
-                <p>For more information on the Gemini LLM, visit the <a href="https://ai.google.dev/" target="_blank" class="text-blue-600 hover:underline">Gemini 2 documentation</a>.</p>
             </small>
         </div>
 
