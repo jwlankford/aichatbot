@@ -1,32 +1,47 @@
 <template>
-    <!-- The root element of the component. It will be mounted into the #app div in index.html -->
-    <div class="w-full max-w-768px bg-white rounded-xl shadow-lg flex flex-col overflow-hidden h-80vh">
-        <!-- Chat messages display area -->
-        <div class="chat-messages">
-            <div v-for="(message, index) in messages" :key="index"
-                 :class="['message-bubble', message.sender === 'user' ? 'user-message' : 'bot-message']">
-                <!-- Use v-html for bot messages to render Markdown -->
-                <span v-if="message.sender === 'user'">{{ message.text }}</span>
-                <span v-else v-html="message.html"></span><span></span>
-            </div>
-            <!-- Loading indicator for bot response -->
-            <div v-show="isLoading" class="loading-indicator">
-                Bot is typing...
-            </div>
+    <!-- Main wrapper for the entire application content -->
+    <div class="main-wrapper flex flex-col md:flex-row md:gap-8 justify-center items-start p-4 md:p-8 w-full max-w-screen-xl mx-auto">
+        <!-- Title and description container -->
+        <div class="title-container w-full md:w-1/3 mb-8 md:mb-0">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Jeremy Lankford</h1>
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gemini LLM Chat Bot</h2>
+            <p class="text-gray-600 mb-2">This is a simple chat bot that uses the Gemini LLM to generate responses.</p>
+            <p class="text-gray-600 mb-4">Type your message below and press enter or click send to get a response.</p>
+            <small class="text-gray-500">
+                <p class="mb-1">Note: This is a demo app and the API key is hardcoded for demonstration purposes. In a production app, the API key is restricted to this domain only.</p>
+                <p>For more information on the Gemini LLM, visit the <a href="https://ai.google.dev/" target="_blank" class="text-blue-600 hover:underline">Gemini 2 documentation</a>.</p>
+            </small>
         </div>
 
-        <!-- Input area for new messages -->
-        <div class="input-area">
-            <input
-                v-model="newMessage"
-                @keyup.enter="sendMessage"
-                placeholder="Type your message..."
-                :disabled="isLoading"
-                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-            />
-            <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()">
-                Send
-            </button>
+        <!-- Main chat interface container -->
+        <div class="body-container w-full md:w-2/3 bg-white rounded-xl shadow-lg flex flex-col overflow-hidden h-80vh">
+            <!-- Chat messages display area -->
+            <div class="chat-messages">
+                <div v-for="(message, index) in messages" :key="index"
+                     :class="['message-bubble message-container', message.sender === 'user' ? 'user-message' : 'bot-message']">
+                    <!-- Use v-html for bot messages to render Markdown -->
+                    <span v-if="message.sender === 'user'">{{ message.text }}</span>
+                    <span v-else v-html="message.html"></span>
+                </div>
+                <!-- Loading indicator for bot response -->
+                <div v-show="isLoading" class="loading-indicator">
+                    Bot is typing...
+                </div>
+            </div>
+
+            <!-- Input area for new messages -->
+            <div class="input-area">
+                <input
+                    v-model="newMessage"
+                    @keyup.enter="sendMessage"
+                    placeholder="Type your message..."
+                    :disabled="isLoading"
+                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+                <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()">
+                    Send
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -34,17 +49,13 @@
 <script>
 // Explicitly import ref and nextTick from 'vue'
 import { ref, nextTick } from 'vue';
-// Import marked directly from the 'marked' package as a default import
-// This is the common way to import 'marked' when installed via npm.
+// Import marked directly from the 'marked' package
 import { marked } from 'marked';
 
 export default {
     // The setup function is where you define reactive state, computed properties, methods, etc.
     setup() {
         console.log("App.vue setup function started.");
-
-        // 'marked' is now imported, so no need to access window.marked
-        // const marked = window.marked; // REMOVED
 
         // Reactive data properties
         const messages = ref([
@@ -100,7 +111,7 @@ export default {
             const payload = { contents: chatHistory };
             // The apiKey is expected to be provided by the Canvas environment at runtime.
             // If running outside Canvas, you would insert your actual API key here.
-            const apiKey = "AIzaSyDo9ZW7pB4DlF3EInk-9FXuPTqDA4fgXzo";
+            const apiKey = "AIzaSyDo9ZW7pB4DlF3EInk-9FXuPTqDA4fgXzo"; // NOTE: This API key is hardcoded for demo.
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             console.log("General Chat API Key (before fetch):", apiKey); // Log API key for debugging
@@ -143,17 +154,29 @@ export default {
 
 <style scoped>
 /* Scoped styles for the App component ensure they only apply to this component */
-.w-full.max-w-768px.bg-white.rounded-xl.shadow-lg.flex.flex-col.overflow-hidden.h-80vh {
-    width: 100%;
-    max-width: 768px; /* Max width for larger screens */
+/* Styling for the main wrapper */
+.main-wrapper {
+    /* These styles are applied directly in the template for the main wrapper div */
+    /* width: 100%; */
+    /* max-width: 768px; */ /* Removed as it's now on the main-wrapper in template */
+    /* background-color: #ffffff; */
+    /* border-radius: 1rem; */
+    /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); */
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* overflow: hidden; */
+    /* height: 80vh; */
+}
+
+/* Styles for the chat interface container */
+.body-container {
     background-color: #ffffff;
-    border-radius: 1rem; /* Rounded corners */
+    border-radius: 1rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
     height: 80vh; /* Fixed height for chat window */
 }
+
 .chat-messages {
     flex-grow: 1;
     overflow-y: auto;
@@ -242,7 +265,7 @@ export default {
 }
 /* Responsive adjustments */
 @media (max-width: 640px) {
-    .w-full.max-w-768px.bg-white.rounded-xl.shadow-lg.flex.flex-col.overflow-hidden.h-80vh {
+    .body-container {
         height: 90vh;
         border-radius: 0.5rem;
     }
@@ -259,6 +282,49 @@ export default {
     }
     .input-area button {
         width: 100%;
+    }
+}
+
+/* Dark mode styles for elements within the component */
+@media (prefers-color-scheme: dark) {
+    .body-container {
+        background-color: #222222;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .chat-messages {
+        background-color: #2c2c2c;
+    }
+    .bot-message {
+        background-color: #333333; /* Darker grey */
+        color: #e0e0e0; /* Lighter text */
+    }
+    .user-message {
+        background-color: #5a8bf7; /* A slightly lighter blue for contrast */
+        color: white;
+    }
+    .input-area {
+        background-color: #222222;
+        border-top-color: #333333;
+    }
+    .input-area input {
+        background-color: #2c2c2c;
+        border-color: #444444;
+        color: #f0f0f0;
+    }
+    .input-area input::placeholder {
+        color: #aaaaaa;
+    }
+    .loading-indicator {
+        color: #aaaaaa;
+    }
+    .title-container h1, .title-container h2, .title-container p {
+        color: #e0e0e0; /* Light text for title container in dark mode */
+    }
+    .title-container small p {
+        color: #b0b0b0;
+    }
+    .title-container a {
+        color: #8ab4f8; /* Lighter blue for links in dark mode */
     }
 }
 </style>

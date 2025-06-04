@@ -65,6 +65,10 @@ button:focus-visible {
   text-align: left;
 }
 
+p {
+  margin: 0.5em 0;
+}
+
 .bot-message p {
   margin: 0.5em 0;
 }
@@ -80,12 +84,26 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color:rgb(217, 224, 235);
   }
   a:hover {
     color: #747bff;
   }
   button {
     background-color: #f9f9f9;
+  }
+
+  .message-container {
+    background-color:#dcdfe5;
+    color: #000;
+  }
+  .body-container {
+    background-color: #f0f0f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .body-container {
+    background-color:rgb(166, 157, 157);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1)
   }
 }
